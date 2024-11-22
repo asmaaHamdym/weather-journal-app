@@ -1,13 +1,30 @@
-/* Global Variables */
-const generateBtn = document.getElementById("generate");
 // Create a new date instance dynamically with JS
 let d = new Date();
 let newDate = d.getMonth() + "." + d.getDate() + "." + d.getFullYear();
 
+let data = { date: newDate };
+
+/* Global Variables */
+const app = document.getElementById("app");
+const generateBtn = document.getElementById("generate");
+const zip = document.getElementById("zip");
+const feelings = document.getElementById("feelings");
+
+const handleChange = (e) => {
+  console.log(e.target.value);
+
+  const { id, value } = e.target;
+
+  data = { [id]: value, ...data };
+  console.log(data);
+};
+
+app.addEventListener("keypress", handleChange);
+
 // Post to the backend
 
 const postData = async (url = "", data = {}) => {
-  console.log(data);
+  //   console.log(data);
   const response = await fetch(url, {
     method: "POST",
     credentials: "same-origin",
@@ -25,4 +42,4 @@ const postData = async (url = "", data = {}) => {
   }
 };
 
-postData("/add", { answer: 42 });
+// postData("/add", { answer: 42 });

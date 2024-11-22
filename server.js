@@ -10,16 +10,14 @@ const port = 3000;
 
 // Require Express to run server and routes
 const express = require("express");
-// body-parser
-const bodyParser = require("body-parser");
 
 // Start up an instance of app
 const app = express();
 
 /* Middleware*/
 //Here we are configuring express to use body-parser as middle-ware.
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
 // Cors for cross origin allowance
 const cors = require("cors");
@@ -64,5 +62,8 @@ app.get("/add", sendData);
 
 function sendData(request, response) {
   // expect 3 params for the post request temp, date and user response
+  console.log(request.body);
+
   projectData = [...projectData, request.body];
+  console.log(projectData);
 }
