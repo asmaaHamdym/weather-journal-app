@@ -1,11 +1,4 @@
-const apiKey = `e47a270fe3a33a7fe2f42131261ecbea&units=imperial`;
-projectData = {
-  date: "",
-  userResponse: "",
-  country: "",
-  city: "",
-  temp: "",
-};
+projectData = [];
 const port = 3000;
 
 // Require Express to run server and routes
@@ -30,40 +23,28 @@ app.use(express.static("website"));
 const server = app.listen(port, listening);
 
 function listening() {
-  console.log(`running on localhost: ${port}`);
+  console.log(`running on localhost: ${port} http://localhost:${port}`);
 }
-
-// call api to convert zip code to lat and lon values
-async function getLatLon(zipCode) {
-  const url = `http://api.openweathermap.org/data/2.5/weather?zip=${zipCode}&appid=${apiKey}`;
-
-  try {
-    const response = await fetch(url);
-
-    const data = await response.json();
-    console.log(data);
-
-    return [data.lat, data.lon];
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-getLatLon("73301");
 
 // GET route
+
 app.get("/all", sendData);
 
 function sendData(request, response) {
   response.send(projectData);
 }
+// Post route
+app.post("/addEntry", updatData);
 
-app.get("/add", sendData);
-
-function sendData(request, response) {
-  // expect 3 params for the post request temp, date and user response
+function updatData(request, response) {
   console.log(request.body);
 
-  projectData = [...projectData, request.body];
-  console.log(projectData);
+  // expect 3 params for the post request temp, date and user response
+  newEntry = {
+    date: request.body.date,
+    temp: request.body.temp,
+    userResponse: request.body.userResponse,
+  };
+
+  projectData.push(newEntry);
 }
