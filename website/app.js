@@ -7,20 +7,15 @@ let newDate = d.getMonth() + "." + d.getDate() + "." + d.getFullYear();
 let formData = { date: newDate };
 
 /* Global Variables */
-// const app = document.getElementById("app");
+
 const zip = document.getElementById("zip");
 const feelings = document.getElementById("feelings");
 const generateBtn = document.getElementById("generate");
-const entryHolder = document.getElementById("entryHolder");
 
 const handleFeelingsChange = (e) => {
   const { id, value } = e.target;
-
   formData.userResponse = value;
-  console.log(formData);
 };
-
-feelings.addEventListener("change", handleFeelingsChange);
 
 // call api to get the temprature using zip code
 async function getTemp(zipCode) {
@@ -28,9 +23,8 @@ async function getTemp(zipCode) {
 
   try {
     const response = await fetch(url);
-
     const data = await response.json();
-    formData = { ...formData, temp: data.main.temp };
+    return data.main.temp;
   } catch (error) {
     console.error(error);
   }
@@ -39,7 +33,6 @@ async function getTemp(zipCode) {
 // Post to the backend
 
 const postData = async (url = "", data = {}) => {
-  // console.log(data);
   const response = await fetch(url, {
     method: "POST",
     credentials: "same-origin",
@@ -49,27 +42,28 @@ const postData = async (url = "", data = {}) => {
     body: JSON.stringify(data),
   });
   try {
-    // const newData = await response.json();
-    // console.log(newData[0]);
-    // return newData;
+    const newData = await response.json();
+    return newData;
   } catch (error) {
     console.log("error", error);
   }
 };
 const clearForm = () => {
-  entryHolder.innerHTML = "";
   feelings.value = "";
   zip.value = "";
 };
-
-const updateUI = async () => {
+const updateUI = (date, temp, userResponse) => {
+  document.getElementById("date").innerHTML = date;
+  document.getElementById("temp").innerHTML = temp;
+  document.getElementById("content").innerHTML = userResponse;
+};
+const getData = async () => {
   const request = await fetch("/all");
   try {
-    const allDatarecent = await request.json();
-    const recentEntry = allDatarecent[allDatarecent.length - 1];
-    document.getElementById("date").innerHTML = recentEntry.date;
-    document.getElementById("temp").innerHTML = recentEntry.temp;
-    document.getElementById("content").innerHTML = recentEntry.userResponse;
+    const allData = await request.json();
+    console.log(allData);
+
+    updateUI(allData.date, allData.temp, allData.userResponse);
   } catch (error) {
     console.log("error", error);
   }
@@ -79,8 +73,13 @@ const handleClick = () => {
     alert("Please Enter zipcode!");
     return;
   }
-  getTemp(zip.value).then(postData("/addEntry", formData)).then(updateUI());
-  // .then(clearForm());
+
+  getTemp(zip.value)
+    .then((temp) => postData("/addEntry", { ...formData, temp: temp }))
+    .then(() => getData())
+    .then(clearForm());
 };
 
+// Event listener
 generateBtn.addEventListener("click", handleClick);
+feelings.addEventListener("change", handleFeelingsChange);

@@ -1,4 +1,4 @@
-projectData = [];
+var projectData = {};
 const port = 3000;
 
 // Require Express to run server and routes
@@ -23,7 +23,7 @@ app.use(express.static("website"));
 const server = app.listen(port, listening);
 
 function listening() {
-  console.log(`running on localhost: ${port} http://localhost:${port}`);
+  console.log(`running on localhost: http://localhost:${port}`);
 }
 
 // GET route
@@ -31,20 +31,21 @@ function listening() {
 app.get("/all", sendData);
 
 function sendData(request, response) {
+  console.log(projectData);
+
   response.send(projectData);
 }
 // Post route
 app.post("/addEntry", updatData);
 
 function updatData(request, response) {
-  console.log(request.body);
+  console.log("Post made");
 
   // expect 3 params for the post request temp, date and user response
-  newEntry = {
+  projectData = {
     date: request.body.date,
     temp: request.body.temp,
     userResponse: request.body.userResponse,
   };
-
-  projectData.push(newEntry);
+  response.send(projectData);
 }
