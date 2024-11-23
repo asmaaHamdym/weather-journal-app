@@ -2,7 +2,10 @@ const apiKey = `e47a270fe3a33a7fe2f42131261ecbea&units=imperial`;
 
 // Create a new date instance dynamically with JS
 let d = new Date();
-let newDate = d.getMonth() + "." + d.getDate() + "." + d.getFullYear();
+let month = d.getMonth() + 1;
+let day = d.getDate();
+let year = d.getFullYear();
+let newDate = `${month}.${day}.${year} `;
 
 let formData = { date: newDate };
 
